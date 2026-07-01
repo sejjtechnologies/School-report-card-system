@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - School Report Card</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            display: flex;
+            height: 100vh;
+            background: #f4f6f9;
+            font-size: 12px;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.dark-mode {
+            background: #1a1a2e;
+            color: #e0e0e0;
+        }
+        body.dark-mode .sidebar {
+            background: linear-gradient(180deg, #16213e 0%, #0f0f1f 100%);
+        }
+        body.dark-mode .top-bar {
+            background: #2a2a4a;
+            color: #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        body.dark-mode .top-bar h1 {
+            color: #e0e0e0;
+        }
+        body.dark-mode .content-section {
+            background: #2a2a4a;
+            color: #e0e0e0;
+        }
+        body.dark-mode .stat-card {
+            background: #2a2a4a;
+            color: #e0e0e0;
+        }
+        body.dark-mode .stat-card p {
+            color: #aaa;
+        }
+        body.dark-mode .form-grid input, 
+        body.dark-mode .form-grid select {
+            background: #3a3a5a;
+            color: #e0e0e0;
+            border-color: #4a4a6a;
+        }
+        body.dark-mode .form-grid label {
+            color: #ccc;
+        }
+        body.dark-mode table th {
+            background: #3a3a5a;
+            color: #e0e0e0;
+        }
+        body.dark-mode table td {
+            border-bottom-color: #3a3a5a;
+            color: #ddd;
+        }
+        body.dark-mode table tr:hover {
+            background: #3a3a5a;
+        }
+        body.dark-mode .table-wrapper {
+            border-color: #3a3a5a;
+        }
+        body.dark-mode .editable-input {
+            background: #3a3a5a;
+            color: #e0e0e0;
+            border-color: #4a4a6a;
+        }
+        body.dark-mode .toast {
+            background: #2a2a4a;
+            color: #e0e0e0;
+            border: 1px solid #4a4a6a;
+        }
+        body.dark-mode .modal {
+            background: #2a2a4a;
+            color: #e0e0e0;
+        }
+        body.dark-mode .modal p {
+            color: #ccc;
+        }
+        body.dark-mode .btn-save-sm {
+            background: #27ae60;
+        }
+        body.dark-mode .admin-info-box {
+            background: #3a3a5a;
+            border-color: #4a4a6a;
+        }
+        body.dark-mode .greeting-text {
+            color: #e0e0e0;
+        }
+        body.dark-mode .datetime-text {
+            color: #aaa;
+        }
+        body.dark-mode .theme-toggle {
+            background: #3a3a5a;
+        }
+        body.dark-mode .theme-toggle:hover {
+            background: #4a4a6a;
+        }
+        body.dark-mode .logout-btn {
+            background: #3a3a5a !important;
+            color: #ff6b6b !important;
+        }
+        body.dark-mode .logout-btn:hover {
+            background: #4a4a6a !important;
+        }
+        body.dark-mode .stat-card:nth-child(1) {
+            background: #1b3a1b;
+        }
+        body.dark-mode .stat-card:nth-child(2) {
+            background: #1a2a4a;
+        }
+        body.dark-mode .stat-card:nth-child(3) {
+            background: #3a2a1a;
+        }
+        body.dark-mode .stat-card:nth-child(4) {
+            background: #3a1a1a;
+        }
+        body.dark-mode .stat-card:nth-child(5) {
+            background: #2a1a3a;
+        }
+        body.dark-mode .settings-group {
+            background: #2a2a4a;
+            border-color: #4a4a6a;
+        }
+        body.dark-mode .settings-group h3 {
+            color: #e0e0e0;
+        }
+        body.dark-mode .settings-group label {
+            color: #ccc;
+        }
+        body.dark-mode .settings-group input,
+        body.dark-mode .settings-group select,
+        body.dark-mode .settings-group textarea {
+            background: #3a3a5a;
+            color: #e0e0e0;
+            border-color: #4a4a6a;
+        }
+        body.dark-mode .manage-item {
+            background: #2a2a4a;
+            border-color: #4a4a6a;
+        }
+        body.dark-mode .manage-item .manage-actions button {
+            background: #3a3a5a;
+            color: #e0e0e0;
+        }
+
+        .sidebar {
+            width: 130px;
+            background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+            color: white;
+            padding: 8px 0;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: background 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar-brand {
+            text-align: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 8px;
+        }
+        .sidebar-brand h2 {
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .sidebar-brand p {
+            font-size: 8px;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            flex: 1;
+        }
+        .sidebar-menu li {
+            padding: 6px 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            border-left: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+        }
+        .sidebar-menu li:hover {
+            background: rgba(255,255,255,0.1);
+            border-left-color: #667eea;
+        }
+        .sidebar-menu li.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: #667eea;
+        }
+        .sidebar-menu li .icon {
+            font-size: 12px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .theme-toggle-wrapper {
+            padding: 6px 10px;
+        }
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 10px;
+        }
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .theme-toggle .toggle-track {
+            width: 32px;
+            height: 16px;
+            background: #555;
+            border-radius: 10px;
+            position: relative;
+            transition: 0.3s;
+        }
+        .theme-toggle .toggle-track .toggle-thumb {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: 0.3s;
+        }
+        .theme-toggle.active .toggle-track {
+            background: #667eea;
+        }
+        .theme-toggle.active .toggle-track .toggle-thumb {
+            left: 18px;
+        }
+        .theme-toggle .toggle-label {
+            color: rgba(255,255,255,0.7);
+            font-size: 9px;
+        }
+
+        .logout-wrapper {
+            padding: 6px 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            padding: 5px 10px;
+            background: white;
+            color: #e74c3c;
+            border: none;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .logout-btn:hover {
+            background: #f8f9fa;
+            transform: scale(1.02);
+        }
+        .logout-btn .icon {
+            font-size: 14px;
+        }
+
+        .main-content {
+            margin-left: 130px;
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            width: calc(100% - 130px);
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 10px;
+            transition: background 0.3s, color 0.3s;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .top-bar h1 {
+            font-size: 15px;
+            color: #333;
+            transition: color 0.3s;
+        }
+        .top-bar .user-info {
+            color: #555;
+            font-size: 10px;
+        }
+
+        .admin-info-box {
+            background: #f8f9fa;
+            padding: 8px 14px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-left: 3px solid #667eea;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .greeting-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            transition: color 0.3s;
+        }
+        .greeting-text .admin-name {
+            color: #667eea;
+        }
+        .datetime-text {
+            font-size: 12px;
+            color: #888;
+            transition: color 0.3s;
+        }
+        .datetime-text .time {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .stats-wrapper {
+            margin-bottom: 12px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .stat-card {
+            padding: 10px 12px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            transition: background 0.3s, color 0.3s;
+        }
+        .stat-card:nth-child(1) {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+        .stat-card:nth-child(2) {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+        .stat-card:nth-child(3) {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+        }
+        .stat-card:nth-child(4) {
+            background: #fce4ec;
+            border-left: 4px solid #e91e63;
+        }
+        .stat-card:nth-child(5) {
+            background: #f3e5f5;
+            border-left: 4px solid #9c27b0;
+        }
+        .stat-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            transition: color 0.3s;
+        }
+        body.dark-mode .stat-card h3 {
+            color: #e0e0e0;
+        }
+        .stat-card p {
+            color: #555;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 2px;
+            transition: color 0.3s;
+        }
+        body.dark-mode .stat-card p {
+            color: #ccc;
+        }
+
+        .content-section {
+            background: white;
+            padding: 14px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: none;
+            transition: background 0.3s, color 0.3s;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .content-section h2 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .search-bar input {
+            flex: 1;
+            min-width: 200px;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 11px;
+            background: white;
+            transition: border-color 0.3s;
+        }
+        .search-bar input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        .search-bar .search-clear {
+            cursor: pointer;
+            color: #999;
+            font-size: 14px;
+            padding: 2px 6px;
+            display: none;
+        }
+        .search-bar .search-clear.show {
+            display: inline;
+        }
+        .search-bar .search-clear:hover {
+            color: #e74c3c;
+        }
+        body.dark-mode .search-bar input {
+            background: #3a3a5a;
+            color: #e0e0e0;
+            border-color: #4a4a6a;
+        }
+
+        .highlight {
+            background: #27ae60;
+            color: white;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        .manage-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .manage-section .manage-box {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e8e8e8;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .manage-section .manage-box h3 {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e8e8e8;
+            padding-bottom: 6px;
+            transition: color 0.3s;
+        }
+        .manage-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 11px;
+            transition: border-color 0.3s;
+        }
+        .manage-item:last-child {
+            border-bottom: none;
+        }
+        .manage-item .manage-actions {
+            display: flex;
+            gap: 4px;
+        }
+        .manage-item .manage-actions button {
+            padding: 2px 8px;
+            font-size: 9px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+        .manage-item .manage-actions .edit-m {
+            background: #f39c12;
+            color: white;
+        }
+        .manage-item .manage-actions .edit-m:hover {
+            background: #d68910;
+        }
+        .manage-item .manage-actions .delete-m {
+            background: #e74c3c;
+            color: white;
+        }
+        .manage-item .manage-actions .delete-m:hover {
+            background: #c0392b;
+        }
+        .manage-add {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .manage-add input {
+            flex: 1;
+            padding: 4px 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+        .manage-add input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        .manage-add button {
+            padding: 4px 10px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .manage-add button:hover {
+            background: #219a52;
+        }
+        body.dark-mode .manage-box {
+            background: #2a2a4a;
+            border-color: #4a4a6a;
+        }
+        body.dark-mode .manage-box h3 {
+            color: #e0e0e0;
+        }
+        body.dark-mode .manage-item {
+            border-color: #4a4a6a;
+        }
+        body.dark-mode .manage-add input {
+            background: #3a3a5a;
+            color: #e0e0e0;
+            border-color: #4a4a6a;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 3px;
+            transition: color 0.3s;
+        }
+        .form-group input, .form-group select {
+            padding: 5px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 11px;
+            background: white;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        .btn {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: 0.3s;
+            position: relative;
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: #5a6fd6;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-success:hover:not(:disabled) {
+            background: #219a52;
+        }
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-danger:hover:not(:disabled) {
+            background: #c0392b;
+        }
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        .btn-warning:hover:not(:disabled) {
+            background: #d68910;
+        }
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 10px;
+        }
+        .btn .spinner-small {
+            display: none;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #fff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+        .btn.loading .spinner-small {
+            display: inline-block;
+        }
+        .btn.loading .btn-text {
+            display: none;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            overflow-y: auto;
+            margin-top: 10px;
+            max-height: 400px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+        .table-wrapper::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 3px;
+        }
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            min-width: 900px;
+        }
+        th {
+            background: #f8f9fa;
+            padding: 6px 8px;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 700;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #f8f9fa;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+        }
+        td {
+            padding: 5px 8px;
+            border-bottom: 1px solid #eee;
+            white-space: nowrap;
+            transition: border-color 0.3s;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .actions {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            transition: background 0.3s, color 0.3s;
+        }
+        .modal h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .modal p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            transition: color 0.3s;
+        }
+        .modal .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .modal .btn-group .btn {
+            padding: 8px 20px;
+            font-size: 12px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: white;
+            font-size: 13px;
+            z-index: 2000;
+            display: none;
+            animation: slideIn 0.3s ease;
+            transition: background 0.3s, color 0.3s;
+        }
+        .toast.success { background: #27ae60; }
+        .toast.error { background: #e74c3c; }
+        .toast.show { display: block; }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .loading-spinner.active {
+            display: block;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+        }
+        .empty-state .icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .marks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .marks-grid .form-group input {
+            width: 100%;
+        }
+
+        .sidebar::-webkit-scrollbar { width: 3px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #667eea; border-radius: 2px; }
+        .main-content::-webkit-scrollbar { width: 3px; }
+        .main-content::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
+
+        .editable-input {
+            width: 60px;
+            padding: 2px 4px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 11px;
+            text-align: center;
+            background: white;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+        }
+        .editable-input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        .editable-input.editing {
+            border-color: #f39c12;
+            background: #fff8e1;
+        }
+        .btn-save-sm {
+            padding: 2px 8px;
+            font-size: 9px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .btn-save-sm:hover {
+            background: #219a52;
+        }
+        .btn-save-sm:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .password-wrapper input {
+            width: 100%;
+            padding-right: 30px;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 14px;
+            background: none;
+            border: none;
+            color: #888;
+            padding: 0;
+        }
+        .toggle-password:hover {
+            color: #667eea;
+        }
+        body.dark-mode .toggle-password {
+            color: #aaa;
+        }
+        body.dark-mode .toggle-password:hover {
+            color: #667eea;
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .stat-card {
+                padding: 8px 10px;
+            }
+            .stat-card h3 {
+                font-size: 16px;
+            }
+            .stat-card p {
+                font-size: 10px;
+            }
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            .manage-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 400px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .stat-card {
+                padding: 6px 8px;
+            }
+            .stat-card h3 {
+                font-size: 14px;
+            }
+            .stat-card p {
+                font-size: 9px;
+            }
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            .manage-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <h2>🏫 Report</h2>
+            <p>Management</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="active" data-page="dashboard"><span class="icon">📊</span> Dashboard</li>
+            <li data-page="students"><span class="icon">👨‍🎓</span> Students</li>
+            <li data-page="marks"><span class="icon">📝</span> Marks</li>
+            <li data-page="reports"><span class="icon">📄</span> Reports</li>
+            <li data-page="manage"><span class="icon">📚</span> Classes/Streams</li>
+            <li data-page="settings"><span class="icon">⚙️</span> Settings</li>
+        </ul>
+
+        <div class="sidebar-bottom">
+            <div class="theme-toggle-wrapper">
+                <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+                    <span class="toggle-label">🌓 Theme</span>
+                    <div class="toggle-track">
+                        <div class="toggle-thumb"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="logout-wrapper">
+                <button class="logout-btn" id="logoutBtn">
+                    <span class="icon">🚪</span> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <h1 id="pageTitle">Dashboard</h1>
+            <span class="user-info">👤 Admin</span>
+        </div>
+
+        <div class="admin-info-box" id="adminInfoBox">
+            <div class="greeting-text" id="greetingText">
+                👋 Good <span id="greetingTime">Morning</span>, <span class="admin-name" id="adminName">Admin</span>
+            </div>
+            <div class="datetime-text" id="datetimeText">
+                <span id="currentDate"></span> | <span class="time" id="currentTime"></span>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="content-section active">
+            <div class="stats-wrapper">
+                <div class="stats-grid">
+                    <div class="stat-card"><h3 id="studentCount">0</h3><p>Students</p></div>
+                    <div class="stat-card"><h3 id="streamCount">0</h3><p>Streams</p></div>
+                    <div class="stat-card"><h3 id="classCount">0</h3><p>Classes</p></div>
+                    <div class="stat-card"><h3 id="subjectCount">0</h3><p>Subjects</p></div>
+                    <div class="stat-card"><h3 id="reportCount">0</h3><p>Reports</p></div>
+                </div>
+            </div>
+            <h2>📋 Welcome</h2>
+            <p>Select an option from the sidebar to manage students, enter marks, or generate reports.</p>
+        </div>
+
+        <!-- Students -->
+        <div id="students" class="content-section">
+            <h2>👨‍🎓 Student Management</h2>
+            
+            <div style="background:#f8f9fa;padding:12px;border-radius:6px;margin-bottom:12px;">
+                <h3 style="font-size:13px;margin-bottom:8px;">➕ Register New Student</h3>
+                <form id="studentForm">
+                    <div class="form-grid">
+                        <div class="form-group"><label>First Name *</label><input type="text" id="firstName" required></div>
+                        <div class="form-group"><label>Last Name *</label><input type="text" id="lastName" required></div>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <select id="gender">
+                                <option value="">Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Date of Birth</label><input type="date" id="dob"></div>
+                        <div class="form-group"><label>Class *</label><select id="classId" required><option value="">Loading...</option></select></div>
+                        <div class="form-group"><label>Stream *</label><select id="streamId" required><option value="">Loading...</option></select></div>
+                        <div class="form-group"><label>Guardian Name</label><input type="text" id="guardianName"></div>
+                        <div class="form-group"><label>Guardian Contact</label><input type="text" id="guardianContact"></div>
+                        <div class="form-group"><label>Guardian Email</label><input type="email" id="guardianEmail"></div>
+                        <div class="form-group"><label>Address</label><input type="text" id="address"></div>
+                        <div class="form-group" style="justify-content:flex-end;">
+                            <button type="submit" class="btn btn-success" id="submitBtn">
+                                <span class="btn-text">✅ Register Student</span>
+                                <span class="spinner-small"></span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search Bar - ON TOP OF TABLE -->
+            <div class="search-bar">
+                <input type="text" id="studentSearch" placeholder="🔍 Search by Name or ID..." oninput="filterStudents()">
+                <span class="search-clear" id="searchClear" onclick="clearSearch()">✕</span>
+                <span style="font-size:10px;color:#888;" id="searchCount"></span>
+            </div>
+
+            <div id="studentsList">
+                <div class="loading-spinner" id="loadingSpinner"><div class="spinner"></div><p>Loading students...</p></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>ID</th><th>Name</th><th>Class</th><th>Stream</th><th>Guardian</th><th>Contact</th><th>Actions</th></tr></thead>
+                        <tbody id="studentsTableBody"></tbody>
+                    </table>
+                </div>
+                <div id="emptyState" class="empty-state" style="display:none;"><span class="icon">📭</span><p>No students registered yet.</p></div>
+            </div>
+        </div>
+
+        <!-- Marks Entry -->
+        <div id="marks" class="content-section">
+            <h2>📝 Marks Entry</h2>
+            <div style="background:#f8f9fa;padding:12px;border-radius:6px;margin-bottom:12px;">
+                <h3 style="font-size:13px;margin-bottom:8px;">📊 Enter Marks</h3>
+                <form id="marksForm">
+                    <div class="form-grid">
+                        <div class="form-group"><label>Select Student *</label><select id="marksStudentId" required><option value="">Loading students...</option></select></div>
+                        <div class="form-group"><label>Exam *</label><select id="examName" required><option value="">Select Exam</option><option value="Midterm">Midterm</option><option value="End of Term">End of Term</option></select></div>
+                        <div class="form-group"><label>Term *</label><select id="term" required><option value="">Select Term</option><option value="Term 1">Term 1</option><option value="Term 2">Term 2</option><option value="Term 3">Term 3</option></select></div>
+                        <div class="form-group"><label>Academic Year *</label><input type="text" id="academicYear" placeholder="e.g. 2024" required></div>
+                    </div>
+                    <div class="marks-grid" id="marksGrid"></div>
+                    <button type="submit" class="btn btn-success" id="marksSubmitBtn"><span class="btn-text">💾 Save Marks</span><span class="spinner-small"></span></button>
+                </form>
+            </div>
+            <div id="marksList">
+                <h3>📋 Saved Marks</h3>
+                <div class="loading-spinner" id="marksLoadingSpinner"><div class="spinner"></div><p>Loading marks...</p></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>Student</th><th>Exam</th><th>Term</th><th>Year</th><th>Subject</th><th>Marks</th><th>Grade</th><th>Actions</th></tr></thead>
+                        <tbody id="marksTableBody"></tbody>
+                    </table>
+                </div>
+                <div id="marksEmpty" class="empty-state" style="display:none;"><span class="icon">📭</span><p>No marks entered yet.</p></div>
+            </div>
+        </div>
+
+        <!-- Reports -->
+        <div id="reports" class="content-section">
+            <h2>📄 Generate Reports</h2>
+            <div style="background:#f8f9fa;padding:12px;border-radius:6px;margin-bottom:12px;">
+                <h3 style="font-size:13px;margin-bottom:8px;">🔍 Search Reports</h3>
+                <div class="form-grid">
+                    <div class="form-group"><label>Class</label><select id="reportClass"><option value="">All Classes</option></select></div>
+                    <div class="form-group"><label>Stream</label><select id="reportStream"><option value="">All Streams</option></select></div>
+                    <div class="form-group"><label>Academic Year</label><input type="text" id="reportYear" placeholder="e.g. 2024"></div>
+                    <div class="form-group"><label>Term</label><select id="reportTerm"><option value="">All Terms</option><option value="Term 1">Term 1</option><option value="Term 2">Term 2</option><option value="Term 3">Term 3</option></select></div>
+                    <div class="form-group" style="justify-content:flex-end;">
+                        <button class="btn btn-primary" onclick="searchReports()">🔍 Search</button>
+                        <button class="btn btn-success" onclick="printAllReports()" style="margin-top:4px;">🖨️ Print All</button>
+                        <button class="btn btn-warning" onclick="downloadAllPDF()" style="margin-top:4px;">📄 PDF All</button>
+                    </div>
+                </div>
+            </div>
+            <div id="reportsList">
+                <div class="loading-spinner" id="reportsLoadingSpinner"><div class="spinner"></div><p>Loading reports...</p></div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead><tr><th>ID</th><th>Name</th><th>Class</th><th>Stream</th><th>Exam</th><th>Term</th><th>Year</th><th>Total</th><th>Avg</th><th>Grade</th><th>Class Rank</th><th>Stream Rank</th><th>Actions</th></tr></thead>
+                        <tbody id="reportsTableBody"></tbody>
+                    </table>
+                </div>
+                <div id="reportsEmpty" class="empty-state" style="display:none;"><span class="icon">📭</span><p>No reports found.</p></div>
+            </div>
+        </div>
+
+        <!-- Manage Classes/Streams -->
+        <div id="manage" class="content-section">
+            <h2>📚 Manage Classes & Streams</h2>
+            
+            <div class="manage-section">
+                <div class="manage-box">
+                    <h3>📖 Classes</h3>
+                    <div id="classesList">
+                        <div class="loading-spinner" id="classesLoading"><div class="spinner"></div><p>Loading...</p></div>
+                        <div id="classesItems"></div>
+                    </div>
+                    <div class="manage-add">
+                        <input type="text" id="newClass" placeholder="Enter class code (e.g. P.8)">
+                        <button onclick="addClass()">➕ Add</button>
+                    </div>
+                </div>
+
+                <div class="manage-box">
+                    <h3>🌊 Streams</h3>
+                    <div id="streamsList">
+                        <div class="loading-spinner" id="streamsLoading"><div class="spinner"></div><p>Loading...</p></div>
+                        <div id="streamsItems"></div>
+                    </div>
+                    <div class="manage-add">
+                        <input type="text" id="newStream" placeholder="Enter stream code (e.g. Y)">
+                        <button onclick="addStream()">➕ Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings" class="content-section">
+            <h2>⚙️ System Settings</h2>
+            <div class="settings-grid">
+                <div class="settings-group">
+                    <h3>🏫 School Information</h3>
+                    <div class="form-group"><label>School Name</label><input type="text" id="schoolName"></div>
+                    <div class="form-group"><label>School Address</label><input type="text" id="schoolAddress"></div>
+                    <div class="form-group"><label>School Phone</label><input type="text" id="schoolPhone"></div>
+                    <div class="form-group"><label>School Email</label><input type="email" id="schoolEmail"></div>
+                    <div class="form-group"><label>School Motto</label><input type="text" id="schoolMotto"></div>
+                    <button class="btn-save-setting" onclick="saveSettings()">💾 Save All Settings</button>
+                </div>
+
+                <div class="settings-group">
+                    <h3>📚 Academic Settings</h3>
+                    <div class="form-group"><label>Current Academic Year</label><input type="text" id="academicYearSetting"></div>
+                    <div class="form-group"><label>Current Term</label><select id="currentTermSetting"><option value="Term 1">Term 1</option><option value="Term 2">Term 2</option><option value="Term 3">Term 3</option></select></div>
+                    <div class="form-group"><label>Number of Terms per Year</label><select id="termsPerYear"><option value="3">3 Terms</option><option value="2">2 Terms</option></select></div>
+                    <button class="btn-save-setting" onclick="saveSettings()">💾 Save All Settings</button>
+                </div>
+
+                <div class="settings-group">
+                    <h3>📄 Report Card Settings</h3>
+                    <div class="form-group"><label>Pass Mark (%)</label><input type="number" id="passMark" min="0" max="100"></div>
+                    <div class="form-group"><label>Grade A (80-100%)</label><input type="text" id="gradeA"></div>
+                    <div class="form-group"><label>Grade B (70-79%)</label><input type="text" id="gradeB"></div>
+                    <div class="form-group"><label>Grade C (60-69%)</label><input type="text" id="gradeC"></div>
+                    <div class="form-group"><label>Grade D (50-59%)</label><input type="text" id="gradeD"></div>
+                    <div class="form-group"><label>Grade F (Below 50%)</label><input type="text" id="gradeF"></div>
+                    <div class="form-group"><label>Headteacher Name</label><input type="text" id="headteacher"></div>
+                    <button class="btn-save-setting" onclick="saveSettings()">💾 Save All Settings</button>
+                </div>
+
+                <div class="settings-group">
+                    <h3>📝 Exam Settings</h3>
+                    <div class="form-group"><label>Midterm Weight (%)</label><input type="number" id="midtermWeight" min="0" max="100"></div>
+                    <div class="form-group"><label>End of Term Weight (%)</label><input type="number" id="endtermWeight" min="0" max="100"></div>
+                    <button class="btn-save-setting" onclick="saveSettings()">💾 Save All Settings</button>
+                </div>
+
+                <div class="settings-group">
+                    <h3>👤 User Management</h3>
+                    <div class="form-group"><label>Current Admin</label><input type="text" id="currentAdmin" readonly style="background:#f0f0f0;"></div>
+                    <div class="form-group"><label>Change Password</label><div class="password-wrapper"><input type="password" id="newPassword" placeholder="Enter new password"><button type="button" class="toggle-password" onclick="togglePassword('newPassword', this)">👁️</button></div></div>
+                    <div class="form-group"><label>Confirm Password</label><div class="password-wrapper"><input type="password" id="confirmPassword" placeholder="Confirm new password"><button type="button" class="toggle-password" onclick="togglePassword('confirmPassword', this)">👁️</button></div></div>
+                    <button class="btn-save-setting" onclick="changePassword()">🔑 Update Password</button>
+                </div>
+
+                <div class="settings-group">
+                    <h3>⚙️ General Settings</h3>
+                    <div class="form-group"><label>Timezone</label><select id="timezone"><option value="EAT">East Africa Time (EAT)</option><option value="UTC">UTC</option><option value="CAT">Central Africa Time</option></select></div>
+                    <div class="form-group"><label>Date Format</label><select id="dateFormat"><option value="DD/MM/YYYY">DD/MM/YYYY</option><option value="MM/DD/YYYY">MM/DD/YYYY</option><option value="YYYY-MM-DD">YYYY-MM-DD</option></select></div>
+                    <div class="form-group"><label>Language</label><select id="language"><option value="English">English</option><option value="Luganda">Luganda</option><option value="Swahili">Swahili</option></select></div>
+                    <button class="btn-save-setting" onclick="saveSettings()">💾 Save All Settings</button>
+                </div>
+
+                <div class="settings-group">
+                    <h3>📧 Notification Settings</h3>
+                    <div class="form-group"><label>Email Notifications</label><select id="emailNotifications"><option value="enabled">Enabled</option><option value="disabled">Disabled</option></select></div>
+                    <div class="form-group"><label>Notify on Report Generation</label><select id="notifyReport"><option value="yes">Yes</option><option value="no">No</option></select></div>
+                    <div class="form-group"><label>Admin Email</label><input type="email" id="adminEmail"></div>
+                    <button class="btn-save-setting" onclick="saveSettings()">💾 Save All Settings</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <h3>⚠️ Confirm Delete</h3>
+            <p>Are you sure you want to delete <strong id="deleteItemName"></strong>? This action cannot be undone.</p>
+            <div class="btn-group">
+                <button class="btn btn-danger" id="confirmDeleteModalBtn">Yes, Delete</button>
+                <button class="btn" style="background:#ccc;color:#333;" id="cancelDeleteModalBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal" style="max-width:350px;">
+            <h3>✏️ Edit Item</h3>
+            <p>Enter new code for <strong id="editItemName"></strong></p>
+            <div style="margin:15px 0;">
+                <input type="text" id="editItemInput" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;font-size:13px;">
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-success" id="confirmEditBtn">Save</button>
+                <button class="btn" style="background:#ccc;color:#333;" id="cancelEditBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let deleteStudentId = null;
+        let allStudents = [];
+        let allSubjects = [];
+        let editingId = null;
+        let classOptions = [];
+        let streamOptions = [];
+        let allMarks = [];
+        let searchQuery = '';
+        let deleteItemId = null;
+        let deleteItemType = '';
+        let editItemId = null;
+        let editItemType = '';
+
+        function toggleTheme() {
+            const body = document.body;
+            const toggle = document.getElementById('themeToggle');
+            body.classList.toggle('dark-mode');
+            toggle.classList.toggle('active');
+            const isDark = body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            const label = toggle.querySelector('.toggle-label');
+            label.textContent = isDark ? '🌙 Dark' : '🌓 Theme';
+        }
+
+        function loadTheme() {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeToggle').classList.add('active');
+                document.querySelector('.theme-toggle .toggle-label').textContent = '🌙 Dark';
+            }
+        }
+
+        function updateGreetingAndDateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            document.getElementById('greetingTime').textContent = hours >= 0 && hours < 12 ? 'Morning' : hours >= 12 && hours < 15 ? 'Afternoon' : 'Evening';
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            let h = hours % 12 || 12;
+            document.getElementById('currentTime').textContent = `${h}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} ${hours >= 12 ? 'PM' : 'AM'}`;
+        }
+        setInterval(updateGreetingAndDateTime, 1000);
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+            btn.textContent = input.type === 'password' ? '👁️' : '🙈';
+        }
+
+        // ============ SEARCH ============
+        function highlightText(text, query) {
+            if (!query || !text) return text;
+            const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function filterStudents() {
+            const input = document.getElementById('studentSearch');
+            searchQuery = input.value.trim();
+            document.getElementById('searchClear').classList.toggle('show', searchQuery);
+            renderStudents(allStudents);
+        }
+
+        function clearSearch() {
+            document.getElementById('studentSearch').value = '';
+            searchQuery = '';
+            document.getElementById('searchClear').classList.remove('show');
+            renderStudents(allStudents);
+        }
+
+        function renderStudents(students) {
+            const tbody = document.getElementById('studentsTableBody');
+            const empty = document.getElementById('emptyState');
+            if (!students || students.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'block';
+                document.getElementById('searchCount').textContent = '';
+                return;
+            }
+            const query = searchQuery.toLowerCase();
+            let filtered = query ? students.filter(s => (s.first_name + ' ' + s.last_name).toLowerCase().includes(query) || (s.student_id || '').toLowerCase().includes(query)) : students;
+            if (filtered.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'block';
+                document.getElementById('searchCount').textContent = 'No matches found';
+                return;
+            }
+            empty.style.display = 'none';
+            document.getElementById('searchCount').textContent = `Showing ${filtered.length} of ${students.length}`;
+            tbody.innerHTML = filtered.map(s => {
+                const fullName = s.first_name + ' ' + s.last_name;
+                return `<tr>
+                    <td><strong>${query ? highlightText(s.student_id, query) : s.student_id}</strong></td>
+                    <td>${query ? highlightText(fullName, query) : fullName}</td>
+                    <td>${s.class_name || '-'}</td>
+                    <td>${s.stream_name || '-'}</td>
+                    <td>${s.guardian_name || '-'}</td>
+                    <td>${s.guardian_contact || '-'}</td>
+                    <td><div class="actions"><button class="btn btn-warning btn-sm" onclick="editStudent(${s.id})">Edit</button><button class="btn btn-danger btn-sm" onclick="confirmDeleteStudent(${s.id}, '${s.first_name} ${s.last_name}')">Delete</button></div></td>
+                </tr>`;
+            }).join('');
+        }
+
+        // ============ SETTINGS ============
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/settings');
+                const data = await response.json();
+                if (data.success) {
+                    const s = data.settings;
+                    document.getElementById('schoolName').value = s.school_name || '';
+                    document.getElementById('schoolAddress').value = s.school_address || '';
+                    document.getElementById('schoolPhone').value = s.school_phone || '';
+                    document.getElementById('schoolEmail').value = s.school_email || '';
+                    document.getElementById('schoolMotto').value = s.school_motto || '';
+                    document.getElementById('academicYearSetting').value = s.academic_year || '';
+                    document.getElementById('currentTermSetting').value = s.current_term || 'Term 1';
+                    document.getElementById('termsPerYear').value = s.terms_per_year || '3';
+                    document.getElementById('passMark').value = s.pass_mark || '50';
+                    document.getElementById('gradeA').value = s.grade_a || 'Excellent';
+                    document.getElementById('gradeB').value = s.grade_b || 'Very Good';
+                    document.getElementById('gradeC').value = s.grade_c || 'Good';
+                    document.getElementById('gradeD').value = s.grade_d || 'Satisfactory';
+                    document.getElementById('gradeF').value = s.grade_f || 'Needs Improvement';
+                    document.getElementById('headteacher').value = s.headteacher || '';
+                    document.getElementById('midtermWeight').value = s.midterm_weight || '40';
+                    document.getElementById('endtermWeight').value = s.endterm_weight || '60';
+                    document.getElementById('timezone').value = s.timezone || 'EAT';
+                    document.getElementById('dateFormat').value = s.date_format || 'DD/MM/YYYY';
+                    document.getElementById('language').value = s.language || 'English';
+                    document.getElementById('emailNotifications').value = s.email_notifications || 'enabled';
+                    document.getElementById('notifyReport').value = s.notify_report || 'yes';
+                    document.getElementById('adminEmail').value = s.admin_email || '';
+                    document.getElementById('currentAdmin').value = 'sejjtechnologies';
+                }
+            } catch (error) {
+                showToast('Error loading settings', 'error');
+            }
+        }
+
+        async function saveSettings() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Saving...';
+            const settings = {
+                school_name: document.getElementById('schoolName').value,
+                school_address: document.getElementById('schoolAddress').value,
+                school_phone: document.getElementById('schoolPhone').value,
+                school_email: document.getElementById('schoolEmail').value,
+                school_motto: document.getElementById('schoolMotto').value,
+                academic_year: document.getElementById('academicYearSetting').value,
+                current_term: document.getElementById('currentTermSetting').value,
+                terms_per_year: document.getElementById('termsPerYear').value,
+                pass_mark: document.getElementById('passMark').value,
+                grade_a: document.getElementById('gradeA').value,
+                grade_b: document.getElementById('gradeB').value,
+                grade_c: document.getElementById('gradeC').value,
+                grade_d: document.getElementById('gradeD').value,
+                grade_f: document.getElementById('gradeF').value,
+                headteacher: document.getElementById('headteacher').value,
+                midterm_weight: document.getElementById('midtermWeight').value,
+                endterm_weight: document.getElementById('endtermWeight').value,
+                timezone: document.getElementById('timezone').value,
+                date_format: document.getElementById('dateFormat').value,
+                language: document.getElementById('language').value,
+                email_notifications: document.getElementById('emailNotifications').value,
+                notify_report: document.getElementById('notifyReport').value,
+                admin_email: document.getElementById('adminEmail').value
+            };
+            try {
+                const response = await fetch('/api/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ settings }) });
+                const result = await response.json();
+                showToast(result.success ? '✅ All settings saved!' : '❌ ' + result.message, result.success ? 'success' : 'error');
+            } catch (error) {
+                showToast('Error saving settings', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Save All Settings';
+            }
+        }
+
+        async function changePassword() {
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+            if (!newPass || !confirmPass) { showToast('Please enter and confirm new password', 'error'); return; }
+            if (newPass !== confirmPass) { showToast('Passwords do not match!', 'error'); return; }
+            if (newPass.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Updating...';
+            try {
+                const response = await fetch('/api/change-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: newPass }) });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('✅ Password updated!', 'success');
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                } else {
+                    showToast('❌ ' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Error updating password', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔑 Update Password';
+            }
+        }
+
+        // ============ MANAGE CLASSES/STREAMS ============
+        async function loadClasses() {
+            try {
+                const response = await fetch('/api/classes');
+                const classes = await response.json();
+                const container = document.getElementById('classesItems');
+                document.getElementById('classesLoading').classList.remove('active');
+                if (classes.length === 0) {
+                    container.innerHTML = '<p style="color:#999;font-size:11px;text-align:center;padding:10px;">No classes added yet.</p>';
+                    return;
+                }
+                container.innerHTML = classes.map(c => `
+                    <div class="manage-item" data-id="${c.id}">
+                        <span>${c.class_name} (${c.class_code})</span>
+                        <div class="manage-actions">
+                            <button class="edit-m" onclick="openEditModal('class', ${c.id}, '${c.class_code}')">Edit</button>
+                            <button class="delete-m" onclick="openDeleteModal('class', ${c.id}, '${c.class_code}')">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading classes:', error);
+            }
+        }
+
+        async function loadStreams() {
+            try {
+                const response = await fetch('/api/streams');
+                const streams = await response.json();
+                const container = document.getElementById('streamsItems');
+                document.getElementById('streamsLoading').classList.remove('active');
+                if (streams.length === 0) {
+                    container.innerHTML = '<p style="color:#999;font-size:11px;text-align:center;padding:10px;">No streams added yet.</p>';
+                    return;
+                }
+                container.innerHTML = streams.map(s => `
+                    <div class="manage-item" data-id="${s.id}">
+                        <span>${s.stream_name} (${s.stream_code})</span>
+                        <div class="manage-actions">
+                            <button class="edit-m" onclick="openEditModal('stream', ${s.id}, '${s.stream_code}')">Edit</button>
+                            <button class="delete-m" onclick="openDeleteModal('stream', ${s.id}, '${s.stream_code}')">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading streams:', error);
+            }
+        }
+
+        // ============ MODAL FUNCTIONS ============
+        function openDeleteModal(type, id, name) {
+            deleteItemId = id;
+            deleteItemType = type;
+            document.getElementById('deleteItemName').textContent = name;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+            deleteItemId = null;
+            deleteItemType = '';
+        }
+
+        document.getElementById('cancelDeleteModalBtn').addEventListener('click', closeDeleteModal);
+
+        document.getElementById('confirmDeleteModalBtn').addEventListener('click', async function() {
+            if (!deleteItemId) return;
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = '⏳ Deleting...';
+            try {
+                const url = deleteItemType === 'class' ? `/api/classes/${deleteItemId}` : `/api/streams/${deleteItemId}`;
+                const response = await fetch(url, { method: 'DELETE' });
+                const result = await response.json();
+                if (result.success) {
+                    showToast(`✅ ${deleteItemType === 'class' ? 'Class' : 'Stream'} deleted!`, 'success');
+                    if (deleteItemType === 'class') {
+                        await loadClasses();
+                    } else {
+                        await loadStreams();
+                    }
+                    await fetchStats();
+                    closeDeleteModal();
+                } else {
+                    showToast('❌ ' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Error deleting: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Yes, Delete';
+            }
+        });
+
+        // Edit Modal
+        function openEditModal(type, id, currentCode) {
+            editItemId = id;
+            editItemType = type;
+            document.getElementById('editItemName').textContent = currentCode;
+            document.getElementById('editItemInput').value = currentCode;
+            document.getElementById('editModal').classList.add('active');
+            setTimeout(() => document.getElementById('editItemInput').focus(), 100);
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+            editItemId = null;
+            editItemType = '';
+            document.getElementById('editItemInput').value = '';
+        }
+
+        document.getElementById('cancelEditBtn').addEventListener('click', closeEditModal);
+
+        document.getElementById('confirmEditBtn').addEventListener('click', async function() {
+            const newCode = document.getElementById('editItemInput').value.trim();
+            if (!newCode) {
+                showToast('Please enter a valid code', 'error');
+                return;
+            }
+            if (!editItemId) return;
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = '⏳ Saving...';
+            try {
+                const url = editItemType === 'class' ? `/api/classes/${editItemId}` : `/api/streams/${editItemId}`;
+                const body = editItemType === 'class' ? { class_code: newCode, class_name: newCode } : { stream_code: newCode, stream_name: newCode };
+                const response = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const result = await response.json();
+                if (result.success) {
+                    showToast(`✅ ${editItemType === 'class' ? 'Class' : 'Stream'} updated!`, 'success');
+                    if (editItemType === 'class') {
+                        await loadClasses();
+                    } else {
+                        await loadStreams();
+                    }
+                    await fetchStats();
+                    closeEditModal();
+                } else {
+                    showToast('❌ ' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Error updating: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save';
+            }
+        });
+
+        // Close modals on outside click
+        document.querySelectorAll('.modal-overlay').forEach(m => {
+            m.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        async function addClass() {
+            const input = document.getElementById('newClass');
+            const code = input.value.trim();
+            if (!code) { showToast('Please enter a class code', 'error'); return; }
+            try {
+                const response = await fetch('/api/classes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ class_code: code, class_name: code }) });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('✅ Class added!', 'success');
+                    input.value = '';
+                    await loadClasses();
+                    await fetchStats();
+                } else {
+                    showToast('❌ ' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Error adding class', 'error');
+            }
+        }
+
+        async function addStream() {
+            const input = document.getElementById('newStream');
+            const code = input.value.trim();
+            if (!code) { showToast('Please enter a stream code', 'error'); return; }
+            try {
+                const response = await fetch('/api/streams', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stream_code: code, stream_name: code }) });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('✅ Stream added!', 'success');
+                    input.value = '';
+                    await loadStreams();
+                    await fetchStats();
+                } else {
+                    showToast('❌ ' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Error adding stream', 'error');
+            }
+        }
+
+        // ============ NAVIGATION ============
+        document.querySelectorAll('.sidebar-menu li[data-page]').forEach(item => {
+            item.addEventListener('click', function() {
+                const page = this.dataset.page;
+                document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+                document.getElementById(page).classList.add('active');
+                document.getElementById('pageTitle').textContent = page.charAt(0).toUpperCase() + page.slice(1);
+                if (page === 'students') loadStudents();
+                if (page === 'dashboard') fetchStats();
+                if (page === 'marks') { loadStudentsForMarks(); loadMarks(); loadSubjects(); }
+                if (page === 'reports') { loadReportFilters(); searchReports(); }
+                if (page === 'manage') { loadClasses(); loadStreams(); }
+            });
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('token');
+            window.location.href = '/';
+        });
+
+        (function checkAuth() {
+            if (!localStorage.getItem('token')) window.location.href = '/';
+        })();
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ============ LOAD FORM DATA ============
+        async function loadFormData() {
+            try {
+                const classesRes = await fetch('/api/classes');
+                classOptions = await classesRes.json();
+                const streamsRes = await fetch('/api/streams');
+                streamOptions = await streamsRes.json();
+                
+                const classSelect = document.getElementById('classId');
+                classSelect.innerHTML = '<option value="">Select Class</option>';
+                classOptions.forEach(c => { 
+                    classSelect.innerHTML += `<option value="${c.id}">${c.class_name}</option>`; 
+                });
+
+                const streamSelect = document.getElementById('streamId');
+                streamSelect.innerHTML = '<option value="">Select Stream</option>';
+                streamOptions.forEach(s => { 
+                    streamSelect.innerHTML += `<option value="${s.id}">${s.stream_name}</option>`; 
+                });
+                
+                console.log('✅ Dropdowns populated:', classOptions.length, 'classes,', streamOptions.length, 'streams');
+            } catch (error) {
+                console.error('Error loading form data:', error);
+                showToast('Error loading data', 'error');
+            }
+        }
+
+        // ============ STUDENTS ============
+        async function loadStudents() {
+            document.getElementById('loadingSpinner').classList.add('active');
+            try {
+                const response = await fetch('/api/students');
+                const data = await response.json();
+                if (data.success) {
+                    allStudents = data.students;
+                    renderStudents(allStudents);
+                }
+            } catch (error) {
+                showToast('Error loading students', 'error');
+            } finally {
+                document.getElementById('loadingSpinner').classList.remove('active');
+            }
+        }
+
+        async function loadStudentsForMarks() {
+            try {
+                const response = await fetch('/api/students');
+                const data = await response.json();
+                if (data.success) {
+                    const select = document.getElementById('marksStudentId');
+                    select.innerHTML = '<option value="">Select Student</option>';
+                    data.students.forEach(s => {
+                        select.innerHTML += `<option value="${s.id}">${s.student_id} - ${s.first_name} ${s.last_name}</option>`;
+                    });
+                }
+            } catch (error) {
+                showToast('Error loading students', 'error');
+            }
+        }
+
+        // ============ MARKS ============
+        async function loadSubjects() {
+            try {
+                const response = await fetch('/api/subjects');
+                allSubjects = await response.json();
+                const grid = document.getElementById('marksGrid');
+                grid.innerHTML = '';
+                allSubjects.forEach(s => {
+                    grid.innerHTML += `<div class="form-group"><label>${s.subject_name}</label><input type="number" id="mark_${s.id}" min="0" max="100" placeholder="Marks"></div>`;
+                });
+            } catch (error) {
+                showToast('Error loading subjects', 'error');
+            }
+        }
+
+        // FIXED: marksForm submit handler - NO frontend grade calculation
+        document.getElementById('marksForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('marksSubmitBtn');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            const studentId = document.getElementById('marksStudentId').value;
+            const examName = document.getElementById('examName').value;
+            const term = document.getElementById('term').value;
+            const academicYear = document.getElementById('academicYear').value.trim();
+            if (!studentId || !examName || !term || !academicYear) {
+                showToast('Please fill all required fields', 'error');
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                return;
+            }
+            const marks = [];
+            allSubjects.forEach(s => {
+                const val = document.getElementById(`mark_${s.id}`).value;
+                if (val !== '') marks.push({ subject_id: s.id, marks_obtained: parseFloat(val) });
+            });
+            if (marks.length === 0) {
+                showToast('Please enter at least one subject mark', 'error');
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                return;
+            }
+            try {
+                const response = await fetch('/api/marks', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ 
+                        student_id: studentId, 
+                        exam_name: examName, 
+                        term, 
+                        academic_year: academicYear, 
+                        marks 
+                    }) 
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast(`✅ Marks saved! Grade: ${result.grade || 'N/A'}`, 'success');
+                    document.getElementById('marksForm').reset();
+                    document.getElementById('marksGrid').querySelectorAll('input').forEach(i => i.value = '');
+                    loadMarks();
+                    searchReports();
+                } else {
+                    showToast('❌ ' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Error saving marks', 'error');
+            } finally {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            }
+        });
+
+        async function loadMarks() {
+            const spinner = document.getElementById('marksLoadingSpinner');
+            const tbody = document.getElementById('marksTableBody');
+            const empty = document.getElementById('marksEmpty');
+            spinner.classList.add('active');
+            tbody.innerHTML = '';
+            empty.style.display = 'none';
+            try {
+                const response = await fetch('/api/marks');
+                const data = await response.json();
+                if (data.success) {
+                    allMarks = data.marks;
+                    if (data.marks.length === 0) {
+                        empty.style.display = 'block';
+                    } else {
+                        tbody.innerHTML = data.marks.map(m => `
+                            <tr>
+                                <td>${m.student_name}</td>
+                                <td>${m.exam_name}</td>
+                                <td>${m.term}</td>
+                                <td>${m.academic_year}</td>
+                                <td>${m.subject_name}</td>
+                                <td><input type="number" class="editable-input" id="mark_edit_${m.id}" value="${m.marks_obtained}" min="0" max="100"></td>
+                                <td id="grade_display_${m.id}">${m.grade || '-'}</td>
+                                <td>
+                                    <button class="btn-save-sm" onclick="saveMark(${m.id})" id="save_btn_${m.id}">💾 Save</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteMark(${m.id})">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                showToast('Error loading marks', 'error');
+            } finally {
+                spinner.classList.remove('active');
+            }
+        }
+
+        // ============ SAVE MARK - LET SERVER CALCULATE GRADE ============
+        async function saveMark(markId) {
+            const input = document.getElementById(`mark_edit_${markId}`);
+            const saveBtn = document.getElementById(`save_btn_${markId}`);
+            const gradeDisplay = document.getElementById(`grade_display_${markId}`);
+            
+            const newMarks = parseFloat(input.value);
+            if (isNaN(newMarks) || newMarks < 0 || newMarks > 100) {
+                showToast('Please enter a valid mark between 0 and 100', 'error');
+                return;
+            }
+
+            const mark = allMarks.find(m => m.id === markId);
+            if (!mark) {
+                showToast('Mark record not found', 'error');
+                return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = '⏳';
+
+            try {
+                const response = await fetch(`/api/marks/${markId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        marks_obtained: newMarks,
+                        student_id: mark.student_id,
+                        subject_id: mark.subject_id,
+                        exam_id: mark.exam_id
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    // Use the grade returned from the server (calculated based on average)
+                    const updatedGrade = result.grade || 'F';
+                    if (gradeDisplay) {
+                        gradeDisplay.textContent = updatedGrade;
+                    }
+                    showToast(`✅ Mark updated! Grade: ${updatedGrade}`, 'success');
+                    loadMarks();
+                    searchReports();
+                } else {
+                    showToast('❌ ' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Error updating mark: ' + error.message, 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = '💾 Save';
+            }
+        }
+
+        async function deleteMark(id) {
+            if (!confirm('Delete this mark entry?')) return;
+            try {
+                const response = await fetch(`/api/marks/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('✅ Mark deleted!', 'success');
+                    loadMarks();
+                    searchReports();
+                } else {
+                    showToast('❌ ' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Error deleting mark', 'error');
+            }
+        }
+
+        // ============ REPORTS ============
+        async function loadReportFilters() {
+            try {
+                const classesRes = await fetch('/api/classes');
+                const classes = await classesRes.json();
+                const streamsRes = await fetch('/api/streams');
+                const streams = await streamsRes.json();
+                const classSelect = document.getElementById('reportClass');
+                classSelect.innerHTML = '<option value="">All Classes</option>';
+                classes.forEach(c => { classSelect.innerHTML += `<option value="${c.id}">${c.class_name}</option>`; });
+                const streamSelect = document.getElementById('reportStream');
+                streamSelect.innerHTML = '<option value="">All Streams</option>';
+                streams.forEach(s => { streamSelect.innerHTML += `<option value="${s.id}">${s.stream_name}</option>`; });
+            } catch (error) {
+                console.error('Error loading filters:', error);
+            }
+        }
+
+        async function searchReports() {
+            const classId = document.getElementById('reportClass').value;
+            const streamId = document.getElementById('reportStream').value;
+            const year = document.getElementById('reportYear').value.trim();
+            const term = document.getElementById('reportTerm').value;
+            const spinner = document.getElementById('reportsLoadingSpinner');
+            const tbody = document.getElementById('reportsTableBody');
+            const empty = document.getElementById('reportsEmpty');
+            spinner.classList.add('active');
+            tbody.innerHTML = '';
+            empty.style.display = 'none';
+            try {
+                let url = '/api/reports?';
+                if (classId) url += `class_id=${classId}&`;
+                if (streamId) url += `stream_id=${streamId}&`;
+                if (year) url += `academic_year=${year}&`;
+                if (term) url += `term=${term}&`;
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.success) {
+                    if (data.reports.length === 0) {
+                        empty.style.display = 'block';
+                    } else {
+                        tbody.innerHTML = data.reports.map(r => {
+                            const avg = parseFloat(r.average);
+                            return `<tr>
+                                <td>${r.student_id}</td>
+                                <td>${r.student_name}</td>
+                                <td>${r.class_name || '-'}</td>
+                                <td>${r.stream_name || '-'}</td>
+                                <td>${r.exam_name}</td>
+                                <td>${r.term}</td>
+                                <td>${r.academic_year}</td>
+                                <td>${r.total_marks || '-'}</td>
+                                <td>${!isNaN(avg) ? avg.toFixed(2) : '-'}</td>
+                                <td>${r.grade || '-'}</td>
+                                <td>${r.class_rank || '-'}</td>
+                                <td>${r.stream_rank || '-'}</td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm" onclick="printSingleReport('${r.student_id}', '${r.exam_name}', '${r.term}', '${r.academic_year}')">Print</button>
+                                    <button class="btn btn-warning btn-sm" onclick="downloadSinglePDF('${r.student_id}', '${r.exam_name}', '${r.term}', '${r.academic_year}')">PDF</button>
+                                </td>
+                            </tr>`;
+                        }).join('');
+                    }
+                }
+            } catch (error) {
+                showToast('Error loading reports', 'error');
+            } finally {
+                spinner.classList.remove('active');
+            }
+        }
+
+        function printSingleReport(studentId, examName, term, year) {
+            window.open(`/api/reports/print/${studentId}?exam_name=${encodeURIComponent(examName)}&term=${encodeURIComponent(term)}&academic_year=${encodeURIComponent(year)}`, '_blank');
+        }
+
+        function downloadSinglePDF(studentId, examName, term, year) {
+            window.open(`/api/reports/pdf/${studentId}?exam_name=${encodeURIComponent(examName)}&term=${encodeURIComponent(term)}&academic_year=${encodeURIComponent(year)}`, '_blank');
+        }
+
+        function printAllReports() {
+            const classId = document.getElementById('reportClass').value;
+            const streamId = document.getElementById('reportStream').value;
+            const year = document.getElementById('reportYear').value.trim();
+            const term = document.getElementById('reportTerm').value;
+            let url = '/api/reports/print-all?';
+            if (classId) url += `class_id=${classId}&`;
+            if (streamId) url += `stream_id=${streamId}&`;
+            if (year) url += `academic_year=${year}&`;
+            if (term) url += `term=${term}&`;
+            window.open(url, '_blank');
+        }
+
+        function downloadAllPDF() {
+            const classId = document.getElementById('reportClass').value;
+            const streamId = document.getElementById('reportStream').value;
+            const year = document.getElementById('reportYear').value.trim();
+            const term = document.getElementById('reportTerm').value;
+            let url = '/api/reports/pdf-all?';
+            if (classId) url += `class_id=${classId}&`;
+            if (streamId) url += `stream_id=${streamId}&`;
+            if (year) url += `academic_year=${year}&`;
+            if (term) url += `term=${term}&`;
+            window.open(url, '_blank');
+        }
+
+        // ============ STUDENT CRUD ============
+        function setButtonLoading(btn, loading) {
+            if (loading) { btn.classList.add('loading'); btn.disabled = true; } 
+            else { btn.classList.remove('loading'); btn.disabled = false; }
+        }
+
+        function resetFormToRegister() {
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = '<span class="btn-text">✅ Register Student</span><span class="spinner-small"></span>';
+            btn.classList.remove('btn-warning');
+            btn.classList.add('btn-success');
+            btn.disabled = false;
+            btn.classList.remove('loading');
+            document.getElementById('studentForm').reset();
+            editingId = null;
+            const form = document.getElementById('studentForm');
+            const newForm = form.cloneNode(true);
+            form.parentNode.replaceChild(newForm, form);
+            newForm.addEventListener('submit', handleRegister);
+            document.getElementById('studentForm').onsubmit = handleRegister;
+            loadFormData();
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            setButtonLoading(btn, true);
+            const data = {
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                gender: document.getElementById('gender').value,
+                dob: document.getElementById('dob').value,
+                classId: document.getElementById('classId').value,
+                streamId: document.getElementById('streamId').value,
+                guardianName: document.getElementById('guardianName').value.trim(),
+                guardianContact: document.getElementById('guardianContact').value.trim(),
+                guardianEmail: document.getElementById('guardianEmail').value.trim(),
+                address: document.getElementById('address').value.trim()
+            };
+            if (!data.firstName || !data.lastName || !data.classId || !data.streamId) {
+                showToast('Please fill all required fields', 'error');
+                setButtonLoading(btn, false);
+                return;
+            }
+            try {
+                const response = await fetch('/api/students', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('✅ Student registered! ID: ' + result.student_id, 'success');
+                    resetFormToRegister();
+                    loadStudents();
+                    fetchStats();
+                } else {
+                    showToast('❌ ' + result.message, 'error');
+                    setButtonLoading(btn, false);
+                }
+            } catch (error) {
+                showToast('Error registering student', 'error');
+                setButtonLoading(btn, false);
+            }
+        }
+
+        async function handleUpdate(e, id) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            setButtonLoading(btn, true);
+            const data = {
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                gender: document.getElementById('gender').value,
+                dob: document.getElementById('dob').value,
+                classId: document.getElementById('classId').value,
+                streamId: document.getElementById('streamId').value,
+                guardianName: document.getElementById('guardianName').value.trim(),
+                guardianContact: document.getElementById('guardianContact').value.trim(),
+                guardianEmail: document.getElementById('guardianEmail').value.trim(),
+                address: document.getElementById('address').value.trim()
+            };
+            try {
+                const response = await fetch(`/api/students/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('✅ Student updated!', 'success');
+                    resetFormToRegister();
+                    loadStudents();
+                    fetchStats();
+                } else {
+                    showToast('❌ ' + result.message, 'error');
+                    setButtonLoading(btn, false);
+                }
+            } catch (error) {
+                showToast('Error updating student', 'error');
+                setButtonLoading(btn, false);
+            }
+        }
+
+        function editStudent(id) {
+            const student = allStudents.find(s => s.id === id);
+            if (!student) return;
+            editingId = id;
+            
+            loadFormData().then(() => {
+                document.getElementById('firstName').value = student.first_name;
+                document.getElementById('lastName').value = student.last_name;
+                document.getElementById('gender').value = student.gender || '';
+                document.getElementById('dob').value = student.date_of_birth ? student.date_of_birth.split('T')[0] : '';
+                document.getElementById('guardianName').value = student.guardian_name || '';
+                document.getElementById('guardianContact').value = student.guardian_contact || '';
+                document.getElementById('guardianEmail').value = student.guardian_email || '';
+                document.getElementById('address').value = student.address || '';
+                
+                if (student.class_id) {
+                    document.getElementById('classId').value = student.class_id;
+                }
+                if (student.stream_id) {
+                    document.getElementById('streamId').value = student.stream_id;
+                }
+            });
+
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = '<span class="btn-text">✏️ Update Student</span><span class="spinner-small"></span>';
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-warning');
+            btn.disabled = false;
+            btn.classList.remove('loading');
+
+            const form = document.getElementById('studentForm');
+            const newForm = form.cloneNode(true);
+            form.parentNode.replaceChild(newForm, form);
+            newForm.addEventListener('submit', function(e) { handleUpdate(e, id); });
+            document.getElementById('studentForm').onsubmit = function(e) { handleUpdate(e, id); };
+
+            document.getElementById('firstName').value = student.first_name;
+            document.getElementById('lastName').value = student.last_name;
+            document.getElementById('gender').value = student.gender || '';
+            document.getElementById('dob').value = student.date_of_birth ? student.date_of_birth.split('T')[0] : '';
+            document.getElementById('guardianName').value = student.guardian_name || '';
+            document.getElementById('guardianContact').value = student.guardian_contact || '';
+            document.getElementById('guardianEmail').value = student.guardian_email || '';
+            document.getElementById('address').value = student.address || '';
+            
+            loadFormData().then(() => {
+                if (student.class_id) {
+                    document.getElementById('classId').value = student.class_id;
+                }
+                if (student.stream_id) {
+                    document.getElementById('streamId').value = student.stream_id;
+                }
+            });
+
+            document.querySelector('#students').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function confirmDeleteStudent(id, name) {
+            deleteStudentId = id;
+            document.getElementById('deleteStudentName').textContent = name;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+            document.getElementById('deleteModal').classList.remove('active');
+            deleteStudentId = null;
+        });
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+            if (!deleteStudentId) return;
+            const btn = document.getElementById('confirmDeleteBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Deleting...';
+            try {
+                const response = await fetch(`/api/students/${deleteStudentId}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (result.success) {
+                    showToast('✅ Student deleted!', 'success');
+                    document.getElementById('deleteModal').classList.remove('active');
+                    loadStudents();
+                    fetchStats();
+                } else {
+                    showToast('❌ ' + result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Error deleting student', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Yes, Delete';
+            }
+            deleteStudentId = null;
+        });
+
+        async function fetchStats() {
+            try {
+                const [studentRes, streamRes, classRes, subjectRes, reportRes] = await Promise.all([
+                    fetch('/api/students/count'),
+                    fetch('/api/streams/count'),
+                    fetch('/api/classes/count'),
+                    fetch('/api/subjects/count'),
+                    fetch('/api/reports/count')
+                ]);
+                const studentData = await studentRes.json();
+                const streamData = await streamRes.json();
+                const classData = await classRes.json();
+                const subjectData = await subjectRes.json();
+                const reportData = await reportRes.json();
+                if (studentData.success) document.getElementById('studentCount').textContent = studentData.count;
+                if (streamData.success) document.getElementById('streamCount').textContent = streamData.count;
+                if (classData.success) document.getElementById('classCount').textContent = classData.count;
+                if (subjectData.success) document.getElementById('subjectCount').textContent = subjectData.count;
+                if (reportData.success) document.getElementById('reportCount').textContent = reportData.count;
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        }
+
+        document.getElementById('studentForm').addEventListener('submit', handleRegister);
+        document.getElementById('studentForm').onsubmit = handleRegister;
+        
+        loadTheme();
+        updateGreetingAndDateTime();
+        loadFormData();
+        loadStudents();
+        fetchStats();
+        loadSettings();
+    </script>
+</body>
+</html>

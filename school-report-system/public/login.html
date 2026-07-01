@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Report Card - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 400px;
+            position: relative;
+        }
+        .login-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .login-container p.subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .form-group label {
+            display: block;
+            color: #555;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: 0.3s;
+            padding-right: 45px;
+        }
+        .form-group input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        .password-wrapper {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 20px;
+            color: #888;
+            user-select: none;
+            transition: 0.3s;
+            background: transparent;
+            border: none;
+            padding: 5px;
+        }
+        .toggle-password:hover {
+            color: #667eea;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .login-btn:hover {
+            transform: scale(1.02);
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+        .success-msg {
+            color: #27ae60;
+            font-size: 13px;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            color: #667eea;
+        }
+        .loading.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>🏫 School Report Card</h2>
+        <p class="subtitle">Admin Login</p>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Enter username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" placeholder="Enter password" required>
+                    <button type="button" class="toggle-password" id="toggleBtn">👁️</button>
+                </div>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+        <div class="loading" id="loading">⏳ Authenticating...</div>
+        <div id="errorMsg" class="error-msg"></div>
+        <div id="successMsg" class="success-msg"></div>
+    </div>
+
+    <script>
+        // Eye toggle
+        const toggleBtn = document.getElementById('toggleBtn');
+        const passwordInput = document.getElementById('password');
+        let isPasswordVisible = false;
+
+        toggleBtn.addEventListener('click', function() {
+            isPasswordVisible = !isPasswordVisible;
+            passwordInput.type = isPasswordVisible ? 'text' : 'password';
+            this.textContent = isPasswordVisible ? '🙈' : '👁️';
+        });
+
+        // Login form
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const successMsg = document.getElementById('successMsg');
+            const loading = document.getElementById('loading');
+            
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+            loading.classList.add('active');
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                loading.classList.remove('active');
+                
+                if (data.success) {
+                    successMsg.textContent = '✅ Login successful! Redirecting...';
+                    successMsg.style.display = 'block';
+                    localStorage.setItem('token', data.token);
+                    setTimeout(() => { window.location.href = '/dashboard'; }, 1000);
+                } else {
+                    errorMsg.textContent = '❌ ' + data.message;
+                    errorMsg.style.display = 'block';
+                }
+            } catch (error) {
+                loading.classList.remove('active');
+                errorMsg.textContent = '❌ Connection error. Try again.';
+                errorMsg.style.display = 'block';
+                console.error('Login error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

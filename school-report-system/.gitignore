@@ -1,0 +1,40 @@
+# Environment variables (contains sensitive data)
+.env
+.env.local
+.env.*.local
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# OS files
+../.bash_history
+../.cache/
+../.config/
+../.git-credentials
+../.gitconfig
+../.ssh/
+../.kivy/
+../.lesshst
+../.mariadb_histor
+../.npm/
+
+# Other
+create-settings-table.js
+setup-db.js
+update-db.js
